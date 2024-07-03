@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = jnius, python3, kivy, django, fpdf, nltk, pdfplumber, pillow, deep-translator, deep-translator[pdf], deep-translator[docx], pypdf, PyPDF2, pytesseract, PyMUPDF
+requirements = sqlparse, jnius, python3, kivy, django, fpdf, asgiref, nltk, pdfplumber, pillow, deep-translator, deep-translator[pdf], deep-translator[docx], pypdf, PyPDF2, pytesseract, PyMUPDF
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes

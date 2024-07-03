@@ -1,8 +1,3 @@
-import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
-
-from django.core.servers.basehttp import WSGIServer, WSGIRequestHandler, get_internal_wsgi_application
-
 from django.utils.termcolors import PALETTES
 
 palette = PALETTES['dark']
@@ -52,24 +47,3 @@ def add_markup(msg, args):
         # Any 5XX, or any other response
         msg = colorize(msg, 'HTTP_SERVER_ERROR')
     return msg
-logpath = os.getenv('PYTHON_SERVICE_ARGUMENT')
-
-
-class RequestHandler(WSGIRequestHandler):
-    def log_message(self, format, *args):
-        # Don't bother logging requests for admin images, or the favicon.
-        if (self.path.startswith(self.admin_static_prefix)
-                or self.path == '/favicon.ico'):
-            return
-
-        msg = "[%s] %s" % (self.log_date_time_string(), format % args)
-        kivymarkup = add_markup(msg, args)
-        with open(logpath, 'a') as fh:
-            fh.write(kivymarkup + '\n')
-            fh.flush()
-
-server_address = ('127.0.0.1', 8000)
-wsgi_handler = get_internal_wsgi_application()
-httpd = WSGIServer(server_address, RequestHandler)
-httpd.set_app(wsgi_handler)
-httpd.serve_forever()

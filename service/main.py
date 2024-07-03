@@ -20,7 +20,7 @@ class RequestHandler(WSGIRequestHandler):
             fh.write(kivymarkup + '\n')
             fh.flush()
 
-server_address = ('0.0.0.0', 8000)
+server_address = ('127.0.0.1', 8000)
 wsgi_handler = get_internal_wsgi_application()
 httpd = WSGIServer(server_address, RequestHandler)
 httpd.set_app(wsgi_handler)

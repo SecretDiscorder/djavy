@@ -8,10 +8,9 @@ from jnius import autoclass, cast
 import os
 from time import sleep
 from threading import Thread
+
 HERE = os.path.abspath(os.path.dirname(__file__))
 LOGPATH = os.path.join(HERE, "djandro.log")
-
-
 
 class DjandroApp(App):
     def build(self):
@@ -21,7 +20,7 @@ class DjandroApp(App):
         self.layout.add_widget(self.info_label)
 
         self.btn = Button(text="Start Django")
-        self.btn.bind(on_press=self.toggle)
+        self.btn.bind(on_press=self.toggle)  # Binding toggle method to on_press event
         self.layout.add_widget(self.btn)
 
         self.console_label = Label(text="", markup=True)
@@ -34,18 +33,17 @@ class DjandroApp(App):
 
         return self.layout
 
-
-
-    def toggle(self):
-        action = self.stop if self.running else self.start
-        self.running = not self.running
+    def toggle(self, instance):  # Adjusted to accept the instance argument
+        action = self.stop if self.service_running else self.start
+        self.service_running = not self.service_running
         action()
-        self.root.ids['info'].text = "[color=#ff0000]Django is OFF[/color]"
-        if self.running:
-            self.root.ids['info'].text = "[color=#00ff00]Django is ON[/color]"
-
-        btn_text = 'Stop' if self.running else 'Start'
-        self.root.ids['btn'].text = btn_text + " Django"
+        
+        if self.service_running:
+            self.info_label.text = "[color=#00ff00]Django is ON[/color]"
+            self.btn.text = "Stop Django"
+        else:
+            self.info_label.text = "[color=#ff0000]Django is OFF[/color]"
+            self.btn.text = "Start Django"
 
     def start(self):
         self.service.start(LOGPATH)
@@ -54,33 +52,28 @@ class DjandroApp(App):
     def stop(self):
         self.service.stop()
         self.logging = False
-        self.running = False
 
     def start_logging(self):
-        self.console = Thread(target=self.logger)
+        self.console_thread = Thread(target=self.logger)
         self.logging = True
-        self.console.start()
+        self.console_thread.start()
 
     def logger(self):
-        label = self.root.ids['console']
-        log = open(LOGPATH, 'r')
-        label.text = log.read()
         while self.logging:
-            log.seek(log.tell())
-            label.text += log.read()
-            sleep(0.2)
+            with open(LOGPATH, 'r') as log_file:
+                log_contents = log_file.read()
+            self.console_label.text = log_contents
+            sleep(0.5)
 
     def on_pause(self):
         if self.logging:
             self.logging = False
-            self.console.join()
+            self.console_thread.join()
         return True
 
-
     def on_resume(self):
-        if self.running:
+        if self.service_running:
             self.start_logging()
 
 if __name__ == '__main__':
     DjandroApp().run()
-

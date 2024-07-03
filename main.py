@@ -8,6 +8,9 @@ from jnius import autoclass, cast
 import os
 from time import sleep
 from threading import Thread
+HERE = os.path.abspath(os.path.dirname(__file__))
+LOGPATH = os.path.join(HERE, "djandro.log")
+
 
 
 class DjandroApp(App):

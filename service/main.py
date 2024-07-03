@@ -1,6 +1,6 @@
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
-from colors import add_markup
+from .colors import add_markup
 from django.core.servers.basehttp import WSGIServer, WSGIRequestHandler, get_internal_wsgi_application
 
 

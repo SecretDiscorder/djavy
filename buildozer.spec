@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = oscpy, sqlparse, androidstorage4kivy, python3, kivy, django==5.0.6, fpdf, asgiref, nltk, pdfplumber, pillow, deep-translator, deep-translator[pdf], deep-translator[docx], pypdf, PyPDF2, pytesseract, PyMuPDF
+requirements = oscpy, sqlparse, androidstorage4kivy, python3, kivy, django==5.0.6, bs4, beautifulsoup4, fpdf, chardet, idna, urllib3, asgiref, nltk, pdfplumber, pillow, deep-translator, deep-translator[pdf], deep-translator[docx], pypdf, PyPDF2, pytesseract, PyMuPDF, regex, six, soupsieve, sh, colorama, toml, charset_normalizer
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes

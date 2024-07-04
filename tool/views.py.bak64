@@ -5,8 +5,9 @@ from deep_translator import GoogleTranslator
 from nltk.tokenize import sent_tokenize
 import os
 from fpdf import FPDF
-from PyPDF2 import PdfReader  # Import PdfReader instead of PdfFileReader
-
+from PIL import Image
+import fitz  # PyMuPDF
+import fpdf
 def index(request):
     output_path = ''
     if request.method == 'POST' and 'input' in request.FILES:
@@ -59,14 +60,12 @@ def handle_pdf_translation(input_pdf_path, target_language):
     return translated_pdf_filename
 
 def extract_text_from_pdf(pdf_path):
-    """Extract text from a PDF file using PyPDF2."""
+    """Extract text from a PDF file using PyMuPDF."""
     text = ""
-    with open(pdf_path, 'rb') as f:
-        pdf_reader = PdfReader(f)
-        num_pages = len(pdf_reader.pages)
-        for page_num in range(num_pages):
-            page = pdf_reader.pages[page_num]
-            text += page.extract_text()
+    doc = fitz.open(pdf_path)
+    for page_num in range(len(doc)):
+        page = doc.load_page(page_num)
+        text += page.get_text()
     return text
 
 def split_text_into_lines(text, max_width):

@@ -18,6 +18,9 @@ move all file in your django directory to main collab directory
 
 ![image](https://github.com/SecretDiscorder/djavy/assets/139457966/d192a606-b0ba-4244-84bf-6157f881608a)
 
+![WhatsApp Image 2024-07-04 at 17 07 36](https://github.com/SecretDiscorder/djavy/assets/139457966/9e0b3cd5-07ba-4f6d-8331-0c529e6357ed)
+
+
 Build in Debian 12 AMD X86_64 With Kivy, and p4a Buildozer.
 
 apps android folder bin/myapp.....apk

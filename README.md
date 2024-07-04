@@ -2,6 +2,8 @@
 
 ## DONT USE ROOT_ USER (ALL FOR PYTHON PIP AND BUILDOZER INSTALATION)
 
+Should use normal user, so importance for running django directory in android
+
 should set andorid-ndk (buildozer.spec) to 26b and rename again to 25b
 
 to build configurate JAVA_HOME JDK_HOME for jnius , ensure you know that JAVA PATH

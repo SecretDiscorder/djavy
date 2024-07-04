@@ -1,146 +1,119 @@
+# mykivyapp.py
+
 from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
-from kivy.clock import Clock
 from kivy.utils import platform
 import os
-from concurrent.futures import ThreadPoolExecutor, Future
-try:
-    from jnius import autoclass
-except Exception:
-    os.environ['JDK_HOME'] = "/usr/lib/jvm/openlogic-openjdk-8-hotspot-amd64"
-    os.environ['JAVA_HOME'] = "/usr/lib/jvm/openlogic-openjdk-8-hotspot-amd64"
-    from jnius import autoclass
-from oscpy.client import OSCClient
-from oscpy.server import OSCThreadServer
 import subprocess
 import sys
+from kivy.clock import Clock
 
-# Set Java environment variables if running on Android
+
+HERE = os.path.abspath(os.path.dirname(__file__))
+LOGPATH = os.path.join(HERE, "djandro.log")
+
 if platform == 'android':
-    os.environ['JDK_HOME'] = "/usr/lib/jvm/openlogic-openjdk-8-hotspot-amd64"
-    os.environ['JAVA_HOME'] = "/usr/lib/jvm/openlogic-openjdk-8-hotspot-amd64"
+    from android.runnable import run_on_ui_thread
 
-# Service name for Android (adjust as per your service class name)
-SERVICE_NAME = u'{packagename}.{servicename}'.format(
-    packagename=u'org.kivy.android',
-    servicename=u'PythonService'
-)
+Builder.load_file('djandro.kv')  # Load the kv file
 
+SERVICE_NAME = u'org.kivy.android.PythonService'
 KV = '''
 BoxLayout:
-    orientation: 'vertical'
-    BoxLayout:
-        size_hint_y: None
-        height: '30sp'
-        Button:
-            text: 'start service'
-            on_press: app.start_service()
-        Button:
-            text: 'stop service'
-            on_press: app.stop_service()
-       
 
-    ScrollView:
-        Label:
-            id: log_label
-            size_hint_y: None
-            height: self.texture_size[1]
-            text_size: self.size[0], None
+        orientation: 'vertical'
+        Button:
+                text: 'Start Django Server'
+                size_hint_y: None
+                height: '50dp'
+                on_press: app.start_django_server(self)
 
-    BoxLayout:
-        size_hint_y: None
-        height: '30sp'
         Button:
-            text: 'ping'
-            on_press: app.send_ping()
-        Button:
-            text: 'clear'
-            on_press: app.clear_log()
-        Label:
-            id: date
+                text: 'Stop Django Server'
+                size_hint_y: None
+                height: '50dp'
+                on_press: app.stop_django_server(self)
+        ScrollView:
+                Label:
+                        id: log_label
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                        text_size: self.size[0], None
+
 
 '''
-
-class ClientServerApp(App):
+class MyKivyApp(App):
     def build(self):
         self.service = None
-
-        # Initialize OSC client and server
-        self.server = server = OSCThreadServer()
-        server.listen(
-            address=b'localhost',
-            port=8000,
-            default=True,
-        )
-        server.bind(b'/message', self.display_message)
-        server.bind(b'/date', self.date)
-        server.bind(b'/django/log', self.display_log)  # Binding for Django log messages
-
-        self.client = OSCClient(b'localhost', 8000)
-
-        # Load Kivy GUI from KV string
+        open(LOGPATH, 'w').close()  # Touch the logfile
+        self.running = False
+        self.logging = False
+ # Load Kivy GUI from KV string
         self.root = Builder.load_string(KV)
         return self.root
+# BoxLayout will be loaded from the .kv file
 
-    def start_service(self):
-        if platform == 'android':
-            service = autoclass(SERVICE_NAME)
-            mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
-            argument = ''
+    if platform == 'android':
+        @run_on_ui_thread
+        def start_django_server(self, instance):
+            try:
+                python_executable = sys.executable
+                self.django_process = subprocess.Popen(
+                    [python_executable, 'manage.py', 'runserver', 'localhost:8000'],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    universal_newlines=True  # Decode stdout as text
+                )
+                self.running = True
+                Clock.schedule_interval(self.read_stdout, 0.1)  # Start reading stdout
+            except Exception as e:
+                print(f"Error starting Django server: {e}")
 
-            # Panggil metode onStartCommand untuk memulai layanan
-            service.onStartCommand(mActivity, None, 0)
+        @run_on_ui_thread
+        def stop_django_server(self, instance):
+            if hasattr(self, 'django_process') and self.django_process.poll() is None:
+                self.django_process.terminate()
+                self.running = False
+                Clock.unschedule(self.read_stdout)
+                print("Django server stopped.")
+            else:
+                print("Django server is not running.")
+    else:
+        def start_django_server(self, instance):
+            try:
+                python_executable = sys.executable
+                self.django_process = subprocess.Popen(
+                    [python_executable, 'manage.py', 'runserver', 'localhost:8001'],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    universal_newlines=True  # Decode stdout as text
+                )
+                self.running = True
+                Clock.schedule_interval(self.read_stdout, 0.1)  # Start reading stdout
+            except Exception as e:
+                print(f"Error starting Django server: {e}")
 
-            self.service = service
-        elif platform in ('linux', 'linux2', 'macos', 'win'):
-            self.service = subprocess.Popen([sys.executable, 'manage.py', 'runserver', 'localhost:8000'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            Clock.schedule_interval(self.read_stdout, 0.1)  # Schedule reading stdout/stderr
-        else:
-            raise NotImplementedError("Service start not implemented on this platform")
-
+        def stop_django_server(self, instance):
+            if hasattr(self, 'django_process') and self.django_process.poll() is None:
+                self.running = False
+                Clock.unschedule(self.read_stdout)
+                self.django_process.terminate()
+                print("Django server stopped.")
+            else:
+                print("Django server is not running.")
     def read_stdout(self, dt):
-        if self.service and hasattr(self.service, 'stdout'):
-            output = self.service.stdout.readline()
+        if self.django_process and hasattr(self.django_process, 'stdout'):
+            output = self.django_process.stdout.readline()
             if output:
-                # Send log message to Kivy
-                self.display_log(output.decode('utf-8'))
+                # Append new log message to existing text
+                self.root.ids.log_label.text += output
+                # Scroll to the bottom of the ScrollView
+                self.root.ids.log_label.parent.scroll_y = 0
         else:
-            # Handle the case where self.service is None or doesn't have stdout
-            # This might happen if service is not started yet or on Android
+            # Handle the case where self.django_process is None or doesn't have stdout
+            # This might happen if the process is not started yet or has terminated
             pass
 
-    def stop_service(self):
-        if self.service:
-            if platform == "android":
-                self.service.stop(self.mActivity)
-            elif platform in ('linux', 'linux2', 'macos', 'win'):
-                if self.service and self.service.poll() is None:
-                    self.service.terminate()  # Send termination signal
-                    self.display_log("Django server stopped.\n")
-         
-            else:
-                raise NotImplementedError("Service stop not implemented on this platform")
-            self.service = None
-
-
-    def send_ping(self):
-        self.client.send_message(b'/ping', [])
-
-    def clear_log(self):
-        self.root.ids.log_label.text = ''
-
-    def display_message(self, message):
-        if self.root:
-            self.root.ids.log_label.text += '{}\n'.format(message.decode('utf8'))
-
-    def date(self, message):
-        if self.root:
-            self.root.ids.date.text = message.decode('utf8')
-
-    def display_log(self, message):
-        if self.root:
-            self.root.ids.log_label.text += '{}\n'.format(message.strip())
-
 if __name__ == '__main__':
-    ClientServerApp().run()
-
+    MyKivyApp().run()

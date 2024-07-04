@@ -2,6 +2,10 @@
 
 should set andorid-ndk (buildozer.spec) to 26b and rename again to 25b
 
+to build configurate JAVA_HOME JDK_HOME for jnius , ensure you know that JAVA PATH
+
+set service name and package name example : org.kivy.android.PythonService (buildozer.spec)
+
 After git clone
 move all file in your django directory to main collab directory
 

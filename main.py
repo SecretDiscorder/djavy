@@ -6,7 +6,7 @@ from kivy.utils import platform
 from kivy.clock import Clock
 
 from django.core.servers.basehttp import WSGIServer, WSGIRequestHandler, get_internal_wsgi_application
-
+from django.conf import settings
 import sys
 
 # Determine the storage path based on the platform
@@ -62,17 +62,18 @@ class MyKivyApp(App):
             server_address = ('127.0.0.1', 8000)
             wsgi_handler = get_internal_wsgi_application()
 
-            class RequestHandler(WSGIRequestHandler):
+            class CustomRequestHandler(WSGIRequestHandler):
                 def log_message(self, format, *args):
-                    # Customize logging as needed
                     msg = "[%s] %s" % (self.log_date_time_string(), format % args)
-                    if hasattr(self.server.app, 'log_path'):  # Check if log_path is available in app
-                        log_path = self.server.app.log_path
+                    log_path = getattr(settings, 'LOG_PATH', None)
+                    if log_path:
                         with open(log_path, 'a') as fh:
                             fh.write(msg + '\n')
                             fh.flush()
                         self.update_log(msg)
-
+                    else:
+                        # Handle the case where LOG_PATH is not defined in settings
+                        pass
                 def update_log(self, message):
                     # Access update_log method from MyKivyApp instance
                     self.server.app.update_log(message)

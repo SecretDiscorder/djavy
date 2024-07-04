@@ -1,5 +1,7 @@
 # ONGOING
 
+should set andorid-ndk (buildozer.spec) to 26b and rename again to 25b
+
 After git clone
 move all file in your django directory to main collab directory
 

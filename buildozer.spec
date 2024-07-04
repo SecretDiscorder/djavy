@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = oscpy, sqlparse, whitenoise, jnius, python3, kivy, django==5.0.6, fpdf, asgiref, nltk, pdfplumber, pillow, deep-translator, deep-translator[pdf], deep-translator[docx], pypdf, PyPDF2, pytesseract, PyMuPDF
+requirements = oscpy, sqlparse, androidstorage4kivy, python3, kivy, django==5.0.6, fpdf, asgiref, nltk, pdfplumber, pillow, deep-translator, deep-translator[pdf], deep-translator[docx], pypdf, PyPDF2, pytesseract, PyMuPDF
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -55,7 +55,7 @@ orientation = portrait
 
 # (list) List of service to declare
 #services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
-
+#services = Pong:service.py
 #
 # OSX Specific
 #
@@ -95,8 +95,9 @@ fullscreen = 0
 
 # (list) Permissions
 # (See https://python-for-android.readthedocs.io/en/latest/buildoptions/#build-options-1 for all the supported syntaxes and properties)
-android.permissions = android.permission.FOREGROUND_SERVICE, android.permission.ACCESS_NETWORK_STATE, android.permission.WRITE_EXTERNAL_STORAGE, android.permission.READ_EXTERNAL_STORAGE, android.permission.MANAGE_EXTERNAL_STORAGE, android.permission.INTERNET, (name=android.permission.WRITE_EXTERNAL_STORAGE;maxSdkVersion=18)
+#android.permissions = android.permission.FOREGROUND_SERVICE, android.permission.INTERNET, (name=android.permission.WRITE_EXTERNAL_STORAGE;maxSdkVersion=18)
 # (list) Permissions
+android.permissions = android.permission.FOREGROUND_SERVICE, android.permission.INTERNET, android.permission.ACCESS_NETWORK_STATE, android.permission.WRITE_EXTERNAL_STORAGE, android.permission.READ_EXTERNAL_STORAGE, android.permission.MANAGE_EXTERNAL_STORAGE
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host

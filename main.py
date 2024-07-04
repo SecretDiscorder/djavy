@@ -7,7 +7,7 @@ from kivy.clock import Clock
 
 from django.core.servers.basehttp import WSGIServer, WSGIRequestHandler, get_internal_wsgi_application
 from django.conf import settings
-import sys
+import threading
 
 # Determine the storage path based on the platform
 if platform == 'android':
@@ -58,46 +58,55 @@ class MyKivyApp(App):
         return self.root
 
     def start_django_server(self, instance):
-        try:
-            server_address = ('127.0.0.1', 8000)
-            wsgi_handler = get_internal_wsgi_application()
+        if not self.running:
+            try:
+                server_address = ('127.0.0.1', 8000)
+                wsgi_handler = get_internal_wsgi_application()
 
-            class CustomRequestHandler(WSGIRequestHandler):
-                def log_message(self, format, *args):
-                    msg = "[%s] %s" % (self.log_date_time_string(), format % args)
-                    log_path = getattr(settings, 'LOG_PATH', None)
-                    if log_path:
-                        with open(log_path, 'a') as fh:
-                            fh.write(msg + '\n')
-                            fh.flush()
-                        self.update_log(msg)
-                    else:
-                        # Handle the case where LOG_PATH is not defined in settings
-                        pass
-                def update_log(self, message):
-                    # Access update_log method from MyKivyApp instance
-                    self.server.app.update_log(message)
+                class CustomRequestHandler(WSGIRequestHandler):
+                    def log_message(self, format, *args):
+                        msg = "[%s] %s" % (self.log_date_time_string(), format % args)
+                        log_path = getattr(settings, 'LOG_PATH', None)
+                        if log_path:
+                            with open(log_path, 'a') as fh:
+                                fh.write(msg + '\n')
+                                fh.flush()
+                            Clock.schedule_once(lambda dt: self.update_log(msg))
+                        else:
+                            # Handle the case where LOG_PATH is not defined in settings
+                            pass
 
-            self.httpd = WSGIServer(server_address, RequestHandler)
-            self.httpd.set_app(wsgi_handler)
-            self.httpd.serve_forever()
-            self.running = True
-            Clock.schedule_interval(self.read_stdout, 0.1)
-        except Exception as e:
-            print(f"Error starting Django server: {e}")
+                    def update_log(self, message):
+                        # Access update_log method from MyKivyApp instance
+                        self.server.app.update_log(message)
+
+                def run_server():
+                    self.httpd = WSGIServer(server_address, CustomRequestHandler)
+                    self.httpd.set_app(wsgi_handler)
+                    self.httpd.serve_forever()
+
+                self.server_thread = threading.Thread(target=run_server)
+                self.server_thread.daemon = True  # Daemonize thread to close with main application
+                self.server_thread.start()
+                self.running = True
+                print("Django server started.")
+            except Exception as e:
+                print(f"Error starting Django server: {e}")
 
     def stop_django_server(self, instance):
-        try:
-            if hasattr(self, 'httpd'):
-                self.httpd.shutdown()
-                self.httpd.server_close()
-                self.running = False
-                Clock.unschedule(self.read_stdout)
-                print("Django server stopped.")
-            else:
-                print("Django server is not running.")
-        except Exception as e:
-            print(f"Error stopping Django server: {e}")
+        if self.running:
+            try:
+                if hasattr(self, 'httpd'):
+                    self.httpd.shutdown()
+                    self.httpd.server_close()
+                    self.running = False
+                    print("Django server stopped.")
+                else:
+                    print("Django server is not running.")
+            except Exception as e:
+                print(f"Error stopping Django server: {e}")
+        else:
+            print("Django server is not running.")
 
     def update_log(self, message):
         # Update the TextInput with the new log message
@@ -111,4 +120,3 @@ class MyKivyApp(App):
 
 if __name__ == '__main__':
     MyKivyApp().run()
-

@@ -85,12 +85,13 @@ class ClientServerApp(App):
     def start_service(self):
         if platform == 'android':
             service = autoclass(SERVICE_NAME)
-       
-            self.mActivity = autoclass(u'org.kivy.android.PythonActivity').mActivity
+            mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
             argument = ''
-            service.start(self.mActivity, argument)
-            self.service = service
 
+            # Panggil metode onStartCommand untuk memulai layanan
+            service.onStartCommand(mActivity, None, 0)
+
+            self.service = service
         elif platform in ('linux', 'linux2', 'macos', 'win'):
             self.service = subprocess.Popen([sys.executable, 'manage.py', 'runserver', 'localhost:8000'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             Clock.schedule_interval(self.read_stdout, 0.1)  # Schedule reading stdout/stderr

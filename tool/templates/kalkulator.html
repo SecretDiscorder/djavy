@@ -1,0 +1,248 @@
+<!-- templates/calculator.html -->
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <title>KALKULATOR WEBSITE PYTHON</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin: 100px auto;
+                color: red;
+                background: #2f3f54;
+                background: radial-gradient(ellipse at center, #0a2e38 0%, #000000 70%);
+                background-size: 100%;
+            }
+
+            #calculator1 {
+                width: 600px;
+                margin: 0 auto;
+                background-color: #fefefe;
+                display: block;
+                border: 1px solid #ccc;
+                padding: 10px 20px;
+                text-align: left;
+            }
+
+            #calculator11 {
+                width: 100%;
+                margin: 0 auto;
+                background-color: #fefefe;
+                display: block;
+                border: 1px solid #ccc;
+                padding: 10px 20px;
+                ;
+                text-align: left;
+            }
+
+            #calculator {
+                width: 70%;
+                margin: 0 auto;
+                background-color: #ff000f;
+                display: block;
+                border: 1px solid #ccc;
+                padding: 10px 20px;
+            }
+
+            textarea {
+                display: block;
+                border: 1px solid #ccc;
+                padding: 10px 20px;
+                width: 80%;
+                height: 500px;
+                font-size: 40px;
+                text-align: left;
+                display: inline-block;
+                margin: 20px auto;
+                padding: 10px 20px;
+                border-radius: 5px;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                transition: background-color 0.2s, color 0.2s;
+                cursor: pointer;
+            }
+
+            input[type="button"] {
+                width: 160px;
+                height: 100px;
+                font-size: 16px;
+                display: inline-block;
+                margin: 20px auto;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 5px;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                transition: background-color 0.2s, color 0.2s;
+                cursor: pointer;
+            }
+
+            button[type="submit"] {
+                width: 160px;
+                height: 100px;
+                font-size: 16px;
+                display: inline-block;
+                margin: 20px auto;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 5px;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                transition: background-color 0.2s, color 0.2s;
+                cursor: pointer;
+            }
+
+            input[type="button"]:hover {
+                background-color: #ccc;
+            }
+
+            input[type="submit"] {
+                width: 100%;
+                height: 40px;
+                font-size: 16px;
+                background-color: #4caf50;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            input[type="submit"]:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Kalkulator</h1>
+        <div id="calculator">
+            <form method="post"> {% csrf_token %} <font size="10px">
+                    <textarea name="expression" id="expression">{{ result }}</textarea>
+                </font>
+                <br>
+                <input type="button" value="1" onclick="appendValue('1')">
+                <input type="button" value="2" onclick="appendValue('2')">
+                <input type="button" value="3" onclick="appendValue('3')">
+                <input type="button" value="4" onclick="appendValue('4')">
+                <input type="button" value="5" onclick="appendValue('5')">
+                <input type="button" value="6" onclick="appendValue('6')">
+                <input type="button" value="7" onclick="appendValue('7')">
+                <input type="button" value="8" onclick="appendValue('8')">
+                <input type="button" value="9" onclick="appendValue('9')">
+                <input type="button" value="0" onclick="appendValue('0')">
+                <input type="button" value="+" onclick="appendValue('+')">
+                <input type="button" value="-" onclick="appendValue('-')">
+                <input type="button" value=" ^²" onclick="appendValue('**')">
+                <input type="button" value="X" onclick="appendValue('*')">
+                <input type="button" value="/" onclick="appendValue('/')">
+                <input type="button" value="% sisa" onclick="appendValue('%')">
+                <button type="submit" name="to_roman" value="To Roman">Romawi</button>
+                <button type="submit" name="from_roman" value="To Number">Angka</button>
+                <button type="submit" name="binary">Binary</button>
+                <button type="submit" name="num">Number</button>
+                <input type="button" value="." onclick="appendValue('.')">
+                <input type="button" value="(" onclick="appendValue('(')">
+                <input type="button" value=")" onclick="appendValue(')')">
+                <button type="submit" name="sqrt">AKAR</button>
+                <button type="submit" name="log">loga basis</button>
+                <button type="submit" name="factorial" value="factorial">Factorial</button>
+                <button type="submit" name="c_to_f" value="C to F">C to F</button>
+                <button type="submit" name="f_to_c" value="F to C">F to C</button>
+                <button type="submit" name="c_to_k">C to K</button>
+                <button type="submit" name="k_to_c">K to C</button>
+                <button type="submit" name="c_to_r">C to R</button>
+                <button type="submit" name="r_to_c">R to C</button>
+                <button type="submit" name="f_to_r">F to R</button>
+                <button type="submit" name="f_to_k">F to K</button>
+                <button type="submit" name="r_to_f">R to F</button>
+                <button type="submit" name="r_to_k">R to K</button>
+                <button type="submit" name="k_to_r">K to R</button>
+                <button type="submit" name="k_to_f">K to F</button>
+                <button type="submit" name="sin" value="sin">sin</button>
+                <button type="submit" name="cos" value="cos">cos</button>
+                <button type="submit" name="tan" value="tan">tan</button>
+                <button type="submit" name="asin" value="asin">asin</button>
+                <button type="submit" name="acos" value="acos">acos</button>
+                <button type="submit" name="atan" value="atan">atan</button>
+                <input type="button" value="Space" onclick="appendValue(' ')">
+                <input type="button" value="Erase" onclick="clearLastCharacter()">
+                <b>
+                    <input type="button" value="C" onclick="clearInput()">
+                </b>
+                <button type="submit" value="=" color="green">
+                    <font size='16' color="green">
+                        <b>=</b>
+                    </font>
+                </button>
+                <!-- ... (kode lainnya) ... -->
+            </form>
+        </div>
+        <script>
+
+
+			function calculateResult() {
+				var expression = document.getElementById("expression").value;
+				try {
+					var result = eval(expression);
+					document.getElementById("expression").value = result;
+				} catch (error) {
+					document.getElementById("expression").value = "Error";
+				}
+			}
+			function appendFunction(func) {
+				if (['Math.sin', 'Math.cos', 'Math.tan', 'Math.asin', 'Math.acos', 'Math.atan'].includes(func)) {
+					document.getElementById("expression").value += func + '(';
+				}
+			}
+			function appendValue(value) {
+			if (value === '!') {
+				document.getElementById("expression").value += 'math.factorial(';
+			} else {
+				document.getElementById("expression").value += value;
+			}
+
+			}
+			   
+			function convertToRoman() {
+				var number = document.getElementById("expression").value;
+				fetch('/kalkulator/', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'X-CSRFToken': csrf_token
+					},
+					body: 'number=' + encodeURIComponent(number)
+				})
+				.then(response => response.json())
+				.then(data => {
+					alert('Roman numeral: ' + data.result);
+				});
+			}
+			function convertFromRoman() {
+				var romanNumber = document.getElementById("expression").value;
+				fetch('/kalkulator/', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'X-CSRFToken': csrf_token
+					},
+					body: 'roman_number=' + encodeURIComponent(romanNumber)
+				})
+				.then(response => response.json())
+				.then(data => {
+					alert('Integer: ' + data.result);
+				});
+			}
+			function clearInput() {
+				document.getElementById("expression").value = "";
+			}
+
+			function clearLastCharacter() {
+				var currentExpression = document.getElementById("expression").value;
+				document.getElementById("expression").value = currentExpression.slice(0, -1);
+			}
+	</script>
+    </body>
+</html>

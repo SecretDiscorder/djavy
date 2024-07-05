@@ -4,8 +4,242 @@ from django.core.files.storage import FileSystemStorage
 from deep_translator import GoogleTranslator
 from nltk.tokenize import sent_tokenize
 import os
+import pytube
+import math
+from decimal import Decimal, getcontext
+getcontext().prec = 9999
+import roman
 from fpdf import FPDF
 from PyPDF2 import PdfReader  # Import PdfReader instead of PdfFileReader
+from pytube.innertube import _default_clients
+from django.views.decorators.csrf import csrf_exempt
+_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
+from math import factorial
+def youtube(request):
+    resolutions = ['360p', '720p', '1080p', '1440p', '2160p', 'mp3']
+    title = ""
+    streams = []
+    streams3 = []
+    error_message = ""
+    resolution = []
+
+    if request.method == 'POST':
+        youtube_link = request.POST.get('youtube_link')
+        resolution = request.POST.get('resolution')
+
+        if youtube_link and resolution:
+            try:
+                yt = pytube.YouTube(youtube_link)
+                title = yt.title
+
+                if resolution == 'mp3':
+                    streams3 = yt.streams.filter(only_audio=True)
+                else:
+                    streams = yt.streams.filter(res=resolution)
+            except pytube.exceptions.VideoUnavailable as e:
+                error_message = f"Error: Video is unavailable ({str(e)})"
+            except Exception as e:
+                error_message = f"Error: {str(e)}"
+        else:
+            error_message = "Please enter a YouTube link and select a resolution."
+
+    context = {
+        'title': title,
+        'streams': streams,
+        'streams3': streams3,
+        'resolutions': resolutions,
+        'selected_resolution': resolution,
+        'error_message': error_message,
+    }
+
+    return render(request, 'youtube.html', context)
+
+def calculate_result(expression):
+    
+    try:
+        
+        expression = expression
+        result = Decimal(eval(expression))
+        return str(result)
+    except Exception as e:
+        return "Error"
+@csrf_exempt
+def kalkulator(request):
+    result = ""
+
+    if request.method == 'POST':
+        expression = request.POST.get('expression', '')
+        result = calculate_result(expression)
+        if 'log' in request.POST :
+            try:
+                angka = expression.split()
+                a = int(angka[0])
+                b = int(angka[1])
+                if b == '':
+                    
+                    result = math.log(a)
+                elif b == '10':
+                    result = math.log10(a)
+                else :
+                    result = math.log(a, b)
+            except ValueError:
+                result = "Gunakan 2 angka dipisah spasi"
+        if 'to_roman' in request.POST:
+            try:
+                result = roman.toRoman(int(expression))
+            except ValueError or IndexError:
+                result = "Invalid number must be 0 - 4999"
+            except Exception:
+                result = "Invalid number must be 0 - 4999"
+        elif 'from_roman' in request.POST:
+            roman_number = expression
+            try:
+                result = roman.fromRoman(roman_number)
+            except roman.InvalidRomanNumeralError:
+                result = "Invalid Roman numeral"
+        elif 'sin' in request.POST:
+            sin = expression
+            try:
+                result = math.sin(float(sin))
+            except ValueError:
+                result = "error"
+        elif 'cos' in request.POST:
+            cos = expression
+            try:
+                result = math.cos(float(cos))
+            except ValueError:
+                result = "error"
+        elif 'tan' in request.POST:
+            tan = expression
+            try:
+                result = math.tan(float(tan))
+            except ValueError:
+                result = "error"
+        elif 'asin' in request.POST:
+            asin = expression
+            try:
+                result = math.asin(float(asin))
+            except ValueError:
+                result = "error"
+        elif 'acos' in request.POST:
+            acos = expression
+            try:
+                result = math.acos(float(acos))
+            except ValueError:
+                result = "error"
+        elif 'atan' in request.POST:
+            atan = expression
+            try:
+                result = math.atan(float(atan))
+            except ValueError:
+                result = "error"
+        elif 'factorial' in request.POST:
+            fact = expression
+            try:
+                result = math.factorial(int(fact))
+            except ValueError:
+                result = "Dont use comma"
+        elif 'c_to_f' in request.POST:
+            celcius = float(expression)
+            try:
+                result = ((celcius * 9/5) + 32)
+            except ValueError:
+                result = "error"
+        elif 'f_to_c' in request.POST:
+            fahrenheit = float(expression)
+            try:
+                result = ((fahrenheit - 32) * 5/9)
+            except ValueError:
+                result = "error"
+        elif 'c_to_k' in request.POST:
+            celcius = expression
+            try:
+                result = (float(celcius) + 273.15)
+            except ValueError:
+                result = "error"
+        elif 'k_to_c' in request.POST:
+            kelvin = float(expression)
+            try:
+                result = (kelvin - 273.15)
+            except ValueError:
+                result = "error"
+        elif 'c_to_r' in request.POST:
+            celcius = float(expression)
+            try:
+                result = (celcius * 4/5)
+            except ValueError:
+                result = "error"
+        elif 'r_to_c' in request.POST:
+            reamur = float(expression)
+            try:
+                result = (reamur * 5/4)
+            except ValueError:
+                result = "error"
+        elif 'r_to_c' in request.POST:
+            reamur = float(expression)
+            try:
+                result = (float(reamur) * 5/4)
+            except ValueError:
+                result = "error"
+        elif 'f_to_r' in request.POST:
+            fahrenheit = float(expression)
+            try:
+                result = ((fahrenheit - 32) * 4/9)
+            except ValueError:
+                result = "error"
+        elif 'f_to_k' in request.POST:
+            fahrenheit = float(expression)
+            try:
+                result = ((fahrenheit + 459.67)* 5/9)
+            except ValueError:
+                result = "error"
+        elif 'r_to_f' in request.POST:
+            reamur = float(expression)
+            try:
+                result = ((reamur * 9/4) + 32)
+            except ValueError:
+                result = "error"
+        elif 'r_to_k' in request.POST:
+            reamur = float(expression)
+            try:
+                result = ((reamur * 5/4) + 273.15)
+            except ValueError:
+                result = "error"
+        elif 'k_to_r' in request.POST:
+            kelvin = float(expression)
+            try:
+                result = ((kelvin - 273.15) * 4/5)
+            except ValueError:
+                result = "error"
+        elif 'k_to_f' in request.POST:
+            kelvin = float(expression)
+            try:
+                result = ((kelvin * 9/5) - 459.67)
+            except ValueError:
+                result = "error"
+        elif 'binary' in request.POST:
+            n = int(expression)
+            try:
+                result = format(n ,"b")
+            except ValueError:
+                result = "Don't use comma"
+        elif 'num' in request.POST:
+            n = expression
+            try:
+                result = int(n, 2)
+            except ValueError:
+                result = "Not Binary"
+                
+        elif 'sqrt' in request.POST:
+            n = int(expression)
+            try:
+                result = math.sqrt(n)
+            except ValueError:
+                result = "Invalid Number"
+
+            
+    return render(request, 'kalkulator.html', {'result': result})
+
 
 def index(request):
     output_path = ''

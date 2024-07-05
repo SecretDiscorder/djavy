@@ -8,7 +8,6 @@ from kivy.clock import Clock
 from django.core.servers.basehttp import WSGIServer, WSGIRequestHandler, get_internal_wsgi_application
 from django.conf import settings
 import threading
-
 # Determine the storage path based on the platform
 if platform == 'android':
     from android.storage import app_storage_path
@@ -28,16 +27,26 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "service.settings")
 KV = '''
 BoxLayout:
     orientation: 'vertical'
-    Button:
-        text: 'Start Django Server'
-        size_hint_y: None
-        height: '50dp'
-        on_press: app.start_django_server(self)
-    Button:
-        text: 'Stop Django Server'
-        size_hint_y: None
-        height: '50dp'
-        on_press: app.stop_django_server(self)
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint_y: 0.1
+
+        Button:
+            text: 'Start Django Server'
+            size_hint_y: None
+            height: '50dp'
+            on_press: app.start_django_server(self)
+        Button:
+            text: 'Stop Django Server'
+            size_hint_y: None
+            height: '50dp'
+            on_press: app.stop_django_server(self)
+        Button:
+            id: info
+            size_hint_y: None
+            height: '50dp'
+            text: ""
+            markup: True
     ScrollView:
         TextInput:
             id: log_textinput
@@ -55,9 +64,16 @@ class MyKivyApp(App):
         self.running = False
         self.logging = False
         self.root = Builder.load_string(KV)
+        Clock.schedule_interval(self.read_stdout, 1.0)  # Update log every 1 second
+        self.update_toggle_text()  
         return self.root
-
+    def update_toggle_text(self):
+        if self.running:
+            self.root.ids.info.text = "[color=#00ff00]Django is ON[/color]"
+        else:
+            self.root.ids.info.text = "[color=#ff0000]Django is OFF[/color]"
     def start_django_server(self, instance):
+
         if not self.running:
             try:
                 server_address = ('127.0.0.1', 8000)
@@ -89,6 +105,8 @@ class MyKivyApp(App):
                 self.server_thread.daemon = True  # Daemonize thread to close with main application
                 self.server_thread.start()
                 self.running = True
+                
+                self.update_toggle_text()  # Update toggle button text
                 print("Django server started.")
             except Exception as e:
                 print(f"Error starting Django server: {e}")
@@ -100,6 +118,7 @@ class MyKivyApp(App):
                     self.httpd.shutdown()
                     self.httpd.server_close()
                     self.running = False
+                    self.update_toggle_text() 
                     print("Django server stopped.")
                 else:
                     print("Django server is not running.")
@@ -115,8 +134,24 @@ class MyKivyApp(App):
         self.root.ids.log_textinput.scroll_y = 0
 
     def read_stdout(self, dt):
-        # Method to read stdout from Django process if needed
-        pass
+        try:
+            with open(self.log_path, 'r') as log_file:
+                msg = log_file.read().strip()
+                if msg:
+                    self.update_log(msg)
+        except Exception as e:
+            print(f"Error reading Django log file: {e}")
+    def on_pause(self):
+        # Pause reading log when the application is paused
+        if self.logging:
+            self.logging = False
+        return True
+
+    def on_resume(self):
+        # Resume reading log when the application is resumed
+        if self.running:
+            self.logging = True
+            Clock.schedule_interval(self.read_stdout, 1.0)
 
 if __name__ == '__main__':
     MyKivyApp().run()

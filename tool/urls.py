@@ -20,5 +20,7 @@ from . import views
 
 urlpatterns = [
     #path('admin/', admin.site.urls),
+    path('', views.youtube , name='YOUTUBE DL'),
     path('transpdf', views.index , name='transpdf'),
+    path('kalkulator', views.kalkulator , name='Kalkulator'),
 ]

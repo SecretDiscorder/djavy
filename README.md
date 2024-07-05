@@ -18,6 +18,9 @@ move all file in your django directory to main collab directory
 
 ![image](https://github.com/SecretDiscorder/djavy/assets/139457966/d192a606-b0ba-4244-84bf-6157f881608a)
 
+![image](https://github.com/SecretDiscorder/djavy/assets/139457966/c15e8f9e-db3c-4d54-a4d3-aff8b9916ffb)
+
+
 ![WhatsApp Image 2024-07-04 at 17 07 36](https://github.com/SecretDiscorder/djavy/assets/139457966/9e0b3cd5-07ba-4f6d-8331-0c529e6357ed)
 
 

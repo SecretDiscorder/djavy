@@ -53,7 +53,7 @@ BoxLayout:
             readonly: True
             size_hint_y: None
             height: self.parent.height
-            text: ""
+            text: "127.0.0.1:8000"
             on_text: self.parent.scroll_y = 0 if len(self.text) > self.height else 1
 '''
 

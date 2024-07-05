@@ -15,6 +15,8 @@ from pytube.innertube import _default_clients
 from django.views.decorators.csrf import csrf_exempt
 _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 from math import factorial
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 def youtube(request):
     resolutions = ['360p', '720p', '1080p', '1440p', '2160p', 'mp3']
     title = ""

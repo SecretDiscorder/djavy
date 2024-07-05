@@ -4,7 +4,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.utils import platform
 from kivy.clock import Clock
-
+from oscpy.client import OSCClient
+from oscpy.server import OSCThreadServer
 from django.core.servers.basehttp import WSGIServer, WSGIRequestHandler, get_internal_wsgi_application
 from django.conf import settings
 import threading
@@ -53,17 +54,26 @@ BoxLayout:
             readonly: True
             size_hint_y: None
             height: self.parent.height
-            text: "http://127.0.0.1:8000"
+            text: "127.0.0.1:8000"
             on_text: self.parent.scroll_y = 0 if len(self.text) > self.height else 1
 '''
 
 class MyKivyApp(App):
     def build(self):
         self.log_path = os.path.join(STORAGE_PATH, "djandro.log")
-        open(self.log_path, 'w').close()  # Touch the logfile
+        open(self.log_path, 'a').close()  # Touch the logfile
         self.running = False
         self.logging = False
         self.root = Builder.load_string(KV)
+# Initialize OSC client and server
+        self.osc_server = OSCThreadServer()
+        self.osc_server.listen(address='127.0.0.1', port=3001, default=True)
+        self.osc_client = OSCClient('127.0.0.1', port=3000)
+        
+        # Bind OSC handlers
+        self.osc_server.bind(b'/django_log', self.handle_django_log)
+        
+
         Clock.schedule_interval(self.read_stdout, 1.0)  # Update log every 1 second
         self.update_toggle_text()  
         return self.root
@@ -104,9 +114,10 @@ class MyKivyApp(App):
                 self.server_thread = threading.Thread(target=run_server)
                 self.server_thread.daemon = True  # Daemonize thread to close with main application
                 self.server_thread.start()
-                self.running = True
-                
+                self.running = True     
                 self.update_toggle_text()  # Update toggle button text
+                self.osc_client.send_message(b'/start_django', [])
+
                 print("Django server started.")
             except Exception as e:
                 print(f"Error starting Django server: {e}")
@@ -118,6 +129,7 @@ class MyKivyApp(App):
                     self.httpd.shutdown()
                     self.httpd.server_close()
                     self.running = False
+                    self.osc_client.send_message(b'/stop_django', [])
                     self.update_toggle_text() 
                     print("Django server stopped.")
                 else:
@@ -152,7 +164,10 @@ class MyKivyApp(App):
         if self.running:
             self.logging = True
             Clock.schedule_interval(self.read_stdout, 1.0)
-
+    def handle_django_log(self, message):
+        # Handle OSC messages received from Django server
+        self.update_log(message.decode())
+        
 if __name__ == '__main__':
     MyKivyApp().run()
 

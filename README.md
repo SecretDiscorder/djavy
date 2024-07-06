@@ -1,4 +1,4 @@
-Note: Read KivyApp_to_APK.ipyb For Setup
+Note: Read KivyApp_to_APK.ipynb For Setup
 
 ---
 

@@ -308,12 +308,14 @@ class MyKivyApp(App):
             except Exception as e:
                 print(f"Error starting Django server: {e}")
       
-    def view_google(self,b):
-        self.browser = self.root.ids.wv                 
-        self.browser = WebView(self.root.ids.log_textinput.text,
-                               enable_javascript = True,
-                               enable_downloads = True,
-                               enable_zoom = True)
+    def view_google(self, button):
+        url = self.root.ids.log_textinput.text
+        self.browser = WebView(url,
+                               enable_javascript=True,
+                               enable_downloads=True,
+                               enable_zoom=True)
+        # Assuming you have 'wv' defined in your kv file for WebView
+        self.root.ids.wv.add_widget(self.browser)
         
     def stop_django_server(self, instance):
         if self.running:

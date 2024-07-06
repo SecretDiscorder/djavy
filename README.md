@@ -41,7 +41,9 @@ Note: Read KivyApp_to_APK.ipyb For Setup
 
 ![Screenshot 2](https://github.com/SecretDiscorder/djavy/assets/139457966/c15e8f9e-db3c-4d54-a4d3-aff8b9916ffb)
 
-![Screenshot 3](https://github.com/SecretDiscorder/djavy/assets/139457966/9e0b3cd5-07ba-4f6d-8331-0c529e6357ed)
+
+https://github.com/SecretDiscorder/djavy/assets/139457966/3854f98a-332e-483a-b199-7fc6f38dc6a9
+
 
 ## Build Instructions
 

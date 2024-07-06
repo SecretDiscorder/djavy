@@ -233,6 +233,7 @@ BoxLayout:
             id: gotowv
             height: '30dp'
             text: "URL"
+            on_press: root.view_google(self)
     BoxLayout:
         id: wv
         orientation: "vertical"

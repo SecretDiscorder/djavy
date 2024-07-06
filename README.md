@@ -2,6 +2,9 @@ Note: Read KivyApp_to_APK.ipynb For Setup
 
 ---
 
+![image](https://github.com/SecretDiscorder/djavy/assets/139457966/bce29793-c9aa-408c-baa5-eea8d47af212)
+
+
 # Kivy Mobile Development Setup Guide for Django Integration
 
 ## Prerequisites

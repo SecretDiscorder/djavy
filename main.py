@@ -242,9 +242,6 @@ BoxLayout:
 class MyKivyApp(App):
     def build(self):
         self.browser = None
-        self.browser = self.root.ids.wv
-
-
         self.log_path = os.path.join(STORAGE_PATH, "djandro.log")
         open(self.log_path, 'a').close()  # Touch the logfile
         self.running = False
@@ -254,11 +251,9 @@ class MyKivyApp(App):
         self.osc_server = OSCThreadServer()
         self.osc_server.listen(address='127.0.0.1', port=3001, default=True)
         self.osc_client = OSCClient('127.0.0.1', port=3000)
-        
         # Bind OSC handlers
         self.osc_server.bind(b'/django_log', self.handle_django_log)
-        
-
+        self.browser = self.root.ids.wv
         Clock.schedule_interval(self.read_stdout, 1.0)  # Update log every 1 second
         self.update_toggle_text()  
         return self.root

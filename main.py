@@ -249,7 +249,7 @@ class MyKivyApp(App):
         self.running = False
         self.logging = False
         self.root = Builder.load_string(KV)
-        self.root.ids.gotowv(on_press=self.view_google)
+        self.root.ids.gotowv.on_press = self.view_google
 # Initialize OSC client and server
         self.osc_server = OSCThreadServer()
         self.osc_server.listen(address='127.0.0.1', port=3001, default=True)

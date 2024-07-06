@@ -9,6 +9,12 @@ import math
 from decimal import Decimal, getcontext
 getcontext().prec = 9999
 import roman
+import sys
+from django.http import JsonResponse
+from .shell import run# Import interpreter Anda di sini
+from . import shell
+from bs4 import BeautifulSoup
+from io import StringIO
 from fpdf import FPDF
 from PyPDF2 import PdfReader  # Import PdfReader instead of PdfFileReader
 from pytube.innertube import _default_clients
@@ -342,3 +348,50 @@ def translate_extracted(text, target_language):
 
     return translated_text
 
+def blang(request):
+    try:
+        output_result = ""
+        selisih = 0.0
+        output = ""
+        if request.method == 'POST':
+            input_code = request.POST.get('input_code', '')
+            html_string = input_code
+            soup = BeautifulSoup(html_string, 'html.parser')
+            text = soup.get_text()
+
+            if text.strip() != "":
+                old_stdout = sys.stdout
+                new_stdout = StringIO()
+                sys.stdout = new_stdout
+
+                # Execute the custom language interpreter function
+                result, error = run('<stdin>', text)
+
+                # Restore stdout to its original value
+                sys.stdout = old_stdout
+
+                # Get the output from StringIO
+                output = new_stdout.getvalue()
+                
+                # Check if result is a list=
+                if error:
+                    output_result = repr(error.as_string())  # Ubah error menjadi string
+                elif result:
+                    if hasattr(result, 'elements') and len(result.elements) == 1:
+                        output_result = repr(result.elements[0])
+                        output = output_result
+                    else:
+                        # Check if result is a list
+                        if isinstance(result, list):
+                            output_result = json.dumps(result)  # Convert list to JSON string
+
+                        else:
+                            output_result = repr(result)
+
+    except Exception as e:
+        # Handle specific exceptions if needed
+        print(f"An error occurred: {e}")
+
+        output_result = f"An error occurred: {e}"
+
+    return render(request, 'blang.html', {'output_result': output_result, 'output': output})

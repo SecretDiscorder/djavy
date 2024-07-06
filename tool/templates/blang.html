@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+	<title></title>
+	<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.1.2/tinymce.min.js" integrity="sha512-2T0G/zn88pKqnmUStXKW0BSPIW3Y2sky5Bl6HER5TwPGqCsLTVzAQRZMum/ptf5mRwYylP1lcvnLkgn6chASuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<style type="text/css">body, a {
+            margin: 0;
+            padding: 0;
+            color: white;
+            background: #0f3854;
+            background: radial-gradient(ellipse at center, #0a2e38 0%, #000000 70%);
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        form {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #1c1c1c;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .code-container {
+            position: relative;
+            margin-top: 20px;
+        }
+        .textarea-container {
+            width: 100%;
+            position: relative;
+        }
+        .line-numbers {
+            counter-reset: line;
+            padding: 10px;
+            font-size: 12px;
+            line-height: 20px;
+            color: #555;
+            position: absolute;
+            left: 10px;
+            top: 0;
+            text-align: right;
+            pointer-events: none;
+            user-select: none;
+        }
+        .line-numbers span {
+            counter-increment: line;
+            display: block;
+            line-height: 1.5;
+        }
+        textarea {
+            display: none; /* Hide the original textarea */
+        }
+        #tinymce-container {
+            border: 1px solid #444;
+            border-radius: 5px;
+            background: #2d2d2d;
+            color: #fff;
+            font-size: 12px;
+            line-height: 20px;
+            outline: none;
+            overflow: auto;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        input[type="submit"]:hover {
+            background-color: darkgreen;
+            transform: scale(1.05);
+        }
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background: #1c1c1c;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+        }
+        #terminal {
+            margin-top: 20px;
+            padding: 10px;
+            background: #1c1c1c;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        button:hover {
+            background-color: darkblue;
+            transform: scale(1.05);
+        }
+	</style>
+</head>
+<body>
+<p><button>Kalkulator Presisi</button></p>
+
+<h1>Blang Programming</h1>
+
+<p>main.blang</p>
+
+<form method="post">{% csrf_token %}
+<div class="code-container">
+<div class="textarea-container"><!-- Tambahkan id pada textarea --><textarea id="tinymce-container" name="input_code" oninput="updateLineNumbers()">CETAK(&quot;HALLO DUNIA&quot;)</textarea></div>
+</div>
+<br />
+<button type="submit">Run Code</button></form>
+
+<div class="code-container">
+<div class="textarea-container">
+<p style="text-align: left;"><!-- Tampilkan output jika ada -->{% if output_result %}</p>
+
+<div class="output">
+<p style="text-align: left;"><label>Output:</label></p>
+
+<pre style="text-align: left;">
+{{ output }}</pre>
+<!-- Gunakan tag pre untuk mempertahankan format teks -->
+
+<pre style="text-align: left;">
+{{ output_result }}</pre>
+</div>
+{% endif %}</div>
+</div>
+<script>
+        tinymce.init({
+            selector: '#tinymce-container',
+            height: 300,
+            plugins: 'autoresize',
+            toolbar: 'undo redo | indent outdent | alignleft aligncenter alignright alignjustify | styleselect | bold italic | bullist numlist | removeformat',
+            setup: function(editor) {
+                editor.on('keydown', function(e) {
+                    // Handle tab key
+                    if (e.keyCode === 9) {
+                        e.preventDefault();
+                        if (e.shiftKey) {
+                            // Outdent when Shift+Tab is pressed
+                            editor.execCommand('Outdent');
+                        } else {
+                            // Indent when Tab is pressed
+                            editor.execCommand('Indent');
+                        }
+                    }
+                });
+            }
+        });
+
+
+        // Function to update line numbers
+        function updateLineNumbers() {
+            var textarea = document.getElementById("textarea");
+            var lineNumbers = document.querySelector(".line-numbers");
+            var lines = textarea.value.split("\n").length;
+            lineNumbers.innerHTML = "";
+            for (var i = 1; i <= lines; i++) {
+                var span = document.createElement("span");
+                span.textContent = i;
+                lineNumbers.appendChild(span);
+            }
+        }
+        // Call the function initially to set up line numbers
+        updateLineNumbers();
+    </script></body>
+</html>

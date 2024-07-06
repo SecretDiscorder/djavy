@@ -21,6 +21,7 @@ from . import views
 urlpatterns = [
     #path('admin/', admin.site.urls),
     path('', views.youtube , name='YOUTUBE DL'),
+    path('blang', views.blang , name='B-LANG PROG'),
     path('transpdf', views.index , name='transpdf'),
     path('kalkulator', views.kalkulator , name='Kalkulator'),
 ]

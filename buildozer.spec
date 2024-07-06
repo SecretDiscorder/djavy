@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = oscpy, sqlparse, androidstorage4kivy, python3, kivy, django==5.0.6, bs4, beautifulsoup4, fpdf, chardet, idna, urllib3, asgiref, nltk, pdfplumber, pillow, deep-translator, deep-translator[pdf], deep-translator[docx], pypdf, PyPDF2, pytesseract, PyMuPDF, regex, six, soupsieve, sh, colorama, toml, charset_normalizer, roman, pytube, pytube3
+requirements = jnius, pyjnius, oscpy, sqlparse, androidstorage4kivy, python3, kivy, django==5.0.6, bs4, beautifulsoup4, fpdf, chardet, idna, urllib3, asgiref, nltk, pdfplumber, pillow, deep-translator, deep-translator[pdf], deep-translator[docx], pypdf, PyPDF2, pytesseract, PyMuPDF, regex, six, soupsieve, sh, colorama, toml, charset_normalizer, roman, pytube, pytube3
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -175,7 +175,7 @@ android.service_class_name = org.kivy.android.PythonService
 # their classes. Don't add jars that you do not need, since extra jars can slow
 # down the build process. Allows wildcards matching, for example:
 # OUYA-ODK/libs/*.jar
-#android.add_jars = foo.jar,bar.jar,path/to/more/*.jar
+# android.add_jars = program.jar, jar/android-1.5_r3.jar, jar/commons-codec-1.3.jar, jar/httpclient-4.0.1.jar, jar/httpcore-4.0.1.jar, jar/opengl-api-gl1.1-android-2.1_r1.jar, jar/xmlParserAPIs-2.6.2.jar, jar/xpp3-1.1.4c.jar
 
 # (list) List of Java files to add to the android project (can be java or a
 # directory containing the files)
@@ -285,7 +285,7 @@ android.service_class_name = org.kivy.android.PythonService
 
 # (list) The Android archs to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 # In past, was `android.arch` as we weren't supporting builds for multiple archs at the same time.
-android.archs = arm64-v8a, armeabi-v7a
+android.archs = arm64-v8a, armeabi-v7a, x86, x86_64
 
 # (int) overrides automatic versionCode computation (used in build.gradle)
 # this is not the same as app version and should only be edited if you know what you're doing

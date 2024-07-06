@@ -51,7 +51,7 @@ Note: Read KivyApp_to_APK.ipyb For Setup
    buildozer android debug
    ```
 
-   Ensure your app's APK is located in `bin/myapp...apk`. ![HERE](https://drive.sma1pecangaan.sch.id:9001/s/ifMmQoXmgJ8AXKc)
+   Ensure your app's APK is located in `bin/myapp...apk`. [HERE](https://drive.sma1pecangaan.sch.id:9001/s/ifMmQoXmgJ8AXKc)
 
 ## Notes
 

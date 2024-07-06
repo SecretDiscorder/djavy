@@ -60,4 +60,4 @@ Read KivyApp_to_APK.ipyb For Setup
 
 ---
 
-This readme aims to provide a clear and structured guide for developers looking to set up a Kivy mobile application environment integrating Django, emphasizing best practices and configuration specifics. Adjust the paths and details as per your specific project setup and requirements.
+buildozer.spec default configuration. All Script and Kivy UI in main.py (do not change)

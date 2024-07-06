@@ -233,7 +233,7 @@ BoxLayout:
             id: gotowv
             height: '30dp'
             text: "URL"
-            on_press: root.view_google(self)
+            on_press: app.view_google(self)
     BoxLayout:
         id: wv
         orientation: "vertical"
@@ -250,7 +250,6 @@ class MyKivyApp(App):
         self.running = False
         self.logging = False
         self.root = Builder.load_string(KV)
-        self.root.ids.gotowv.on_press = self.view_google
 # Initialize OSC client and server
         self.osc_server = OSCThreadServer()
         self.osc_server.listen(address='127.0.0.1', port=3001, default=True)
@@ -309,14 +308,14 @@ class MyKivyApp(App):
             except Exception as e:
                 print(f"Error starting Django server: {e}")
       
-    def view_google(self, button):
+    def view_google(self, instance):
         url = self.root.ids.log_textinput.text
         self.browser = WebView(url,
                                enable_javascript=True,
                                enable_downloads=True,
                                enable_zoom=True)
-        # Assuming you have 'wv' defined in your kv file for WebView
         self.root.ids.wv.add_widget(self.browser)
+
         
     def stop_django_server(self, instance):
         if self.running:

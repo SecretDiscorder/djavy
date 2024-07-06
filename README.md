@@ -56,7 +56,7 @@ https://github.com/SecretDiscorder/djavy/assets/139457966/3854f98a-332e-483a-b19
    buildozer android debug
    ```
 
-   Ensure your app's APK is located in `bin/myapp...apk`. [HERE](https://drive.sma1pecangaan.sch.id:9001/s/ifMmQoXmgJ8AXKc)
+   Ensure your app's APK is located in `bin/myapp...apk`. 
 
 ## Notes
 

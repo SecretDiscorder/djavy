@@ -242,7 +242,7 @@ BoxLayout:
 class MyKivyApp(App):
     def build(self):
         self.browser = None
-
+        self.browser = self.root.ids.wv
 
 
         self.log_path = os.path.join(STORAGE_PATH, "djandro.log")
@@ -314,7 +314,7 @@ class MyKivyApp(App):
                                enable_javascript=True,
                                enable_downloads=True,
                                enable_zoom=True)
-        self.root.ids.wv.add_widget(self.browser)
+
 
         
     def stop_django_server(self, instance):
@@ -371,4 +371,3 @@ class MyKivyApp(App):
         
 if __name__ == '__main__':
     MyKivyApp().run()
-
